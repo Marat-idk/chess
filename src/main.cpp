@@ -1,9 +1,9 @@
 #include <iostream>
+#include "Chess.h"
+
+using namespace Chess;
 
 int main(){
-    const char *t = "\u2654";
-    std::cout << sizeof(t);
-
-
-    return 0;
+    ChessBoard temp;
+    temp.PrintChessBoard();
 }

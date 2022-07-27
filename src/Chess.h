@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 namespace Chess {
 
@@ -10,12 +11,12 @@ enum Color {
 };
 
 enum PieceType {
-    pawn,               // Пешка
-    knight,             // Конь
-    bishop,             // Слон
-    rook,               // Ладья
+    king,               // Король
     queen,              // Ферзь
-    king                // Король
+    rook,               // Ладья
+    bishop,             // Слон
+    knight,             // Конь
+    pawn                // Пешка
 };
 
 class ChessPiece {
@@ -34,10 +35,24 @@ public:
 
     ChessPiece(PieceType piece, Color color, uint8_t horizontal, uint8_t vertical) noexcept;
 
-
     void MoveTo(char horizontal, uint8_t vertical);
     
     const char *GetPieceSymbol() const;
+};
+
+class ChessBoard {
+private:
+    std::vector<ChessPiece> mPieces;
+
+    static const char horizontalPos[];
+public:
+    ChessBoard();
+    ChessBoard(const ChessBoard& piece) = delete;
+    ChessBoard(ChessBoard&& piece) = delete;
+    ChessBoard& operator=(const ChessBoard& piece) = delete;
+    ChessBoard& operator=(ChessBoard&& piece) = delete;
+
+    void PrintChessBoard() const;
 };
 
 }   // Chess

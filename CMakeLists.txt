@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(task2 VERSION 1.0.0)
+project(chess VERSION 1.0.0)
 
 # Переменная для одиковых названий экспортруемого таргетов
 set(EXPORT_TARGETS_NAME ${PROJECT_NAME}Targets)
 
 # Определяем стандарт С++
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
 # Определяем суфикс для версии Debug
 set(CMAKE_DEBUG_POSTFIX _g)
