@@ -1,5 +1,6 @@
 #include "Chess.h"
 #include <cstdio>
+#include <algorithm>
 
 namespace Chess {
 
@@ -32,6 +33,25 @@ const char* ChessPiece::GetPieceSymbol() const {
 const char ChessBoard::horizontalPos[] = "abcdefgh";
 
 ChessBoard::ChessBoard() {
+    for(int i = 0; i < 8; ++i){
+        mPieces.push_back(ChessPiece((PieceType::pawn), Color::white, horizontalPos[i], 2));
+        mPieces.push_back(ChessPiece((PieceType::pawn), Color::black, horizontalPos[i], 7));
+    }
+    mPieces.push_back(ChessPiece((PieceType::rook), Color::white, horizontalPos[0], 1));
+    mPieces.push_back(ChessPiece((PieceType::rook), Color::white, horizontalPos[7], 1));
+    mPieces.push_back(ChessPiece((PieceType::rook), Color::black, horizontalPos[0], 8));
+    mPieces.push_back(ChessPiece((PieceType::rook), Color::black, horizontalPos[7], 8));
+}
+
+const char *ChessBoard::GetSymbol(int vertical, int horizontal) const {
+    auto result = std::find_if(mPieces.begin(), mPieces.end(), [vertical, horizontal](const ChessPiece &p) { 
+        return p.getVerticalPos() == vertical && p.getHorizontalPos() == horizontalPos[horizontal-1]; 
+        });
+    
+    if(result != std::end(mPieces))
+        return result->GetPieceSymbol();
+    
+    return (vertical + horizontal) % 2 == 0 ? "\u25A0" : "\u25A1";
     
 }
 
@@ -41,7 +61,7 @@ void ChessBoard::PrintChessBoard() const {
         putchar('0' + v);
         putchar(' ');
         for(int h = 1; h <= 8; ++h) {
-            (v + h) % 2 == 0 ? fputs("\u25A0 ", stdout) : fputs("\u25A1 ", stdout);
+            fprintf(stdout, "%s " , GetSymbol(v, h));
         }
         putchar('\n');
     }

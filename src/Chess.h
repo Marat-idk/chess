@@ -23,9 +23,8 @@ class ChessPiece {
 private:
     PieceType mPiece;
     Color mColor;
-    uint8_t mHorizontal;
+    char mHorizontal;
     uint8_t mVertical;
-
 public:
     ChessPiece() = delete;
     ChessPiece(const PieceType& piece) = delete;
@@ -34,6 +33,9 @@ public:
     ChessPiece& operator=(PieceType&& piece) = delete;
 
     ChessPiece(PieceType piece, Color color, uint8_t horizontal, uint8_t vertical) noexcept;
+
+    inline char getHorizontalPos() const { return mHorizontal; }
+    inline uint8_t getVerticalPos() const { return mVertical; }
 
     void MoveTo(char horizontal, uint8_t vertical);
     
@@ -51,6 +53,8 @@ public:
     ChessBoard(ChessBoard&& piece) = delete;
     ChessBoard& operator=(const ChessBoard& piece) = delete;
     ChessBoard& operator=(ChessBoard&& piece) = delete;
+
+    const char *GetSymbol(int vertical, int horizontal) const;
 
     void PrintChessBoard() const;
 };
