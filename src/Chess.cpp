@@ -37,10 +37,27 @@ ChessBoard::ChessBoard() {
         mPieces.push_back(ChessPiece((PieceType::pawn), Color::white, horizontalPos[i], 2));
         mPieces.push_back(ChessPiece((PieceType::pawn), Color::black, horizontalPos[i], 7));
     }
-    mPieces.push_back(ChessPiece((PieceType::rook), Color::white, horizontalPos[0], 1));
-    mPieces.push_back(ChessPiece((PieceType::rook), Color::white, horizontalPos[7], 1));
-    mPieces.push_back(ChessPiece((PieceType::rook), Color::black, horizontalPos[0], 8));
-    mPieces.push_back(ChessPiece((PieceType::rook), Color::black, horizontalPos[7], 8));
+    mPieces.push_back(ChessPiece((PieceType::rook), Color::white, 'a', 1));
+    mPieces.push_back(ChessPiece((PieceType::rook), Color::white, 'h', 1));
+    mPieces.push_back(ChessPiece((PieceType::rook), Color::black, 'a', 8));
+    mPieces.push_back(ChessPiece((PieceType::rook), Color::black, 'h', 8));
+
+    mPieces.push_back(ChessPiece((PieceType::knight), Color::white, 'b', 1));
+    mPieces.push_back(ChessPiece((PieceType::knight), Color::white, 'g', 1));
+    mPieces.push_back(ChessPiece((PieceType::knight), Color::black, 'b', 8));
+    mPieces.push_back(ChessPiece((PieceType::knight), Color::black, 'g', 8));
+
+    mPieces.push_back(ChessPiece((PieceType::bishop), Color::white, 'c', 1));
+    mPieces.push_back(ChessPiece((PieceType::bishop), Color::white, 'f', 1));
+
+    mPieces.push_back(ChessPiece((PieceType::bishop), Color::black, 'c', 8));
+    mPieces.push_back(ChessPiece((PieceType::bishop), Color::black, 'f', 8));
+
+    mPieces.push_back(ChessPiece((PieceType::queen), Color::white, 'd', 1));
+    mPieces.push_back(ChessPiece((PieceType::queen), Color::black, 'd', 8));
+
+    mPieces.push_back(ChessPiece((PieceType::king), Color::white, 'e', 1));
+    mPieces.push_back(ChessPiece((PieceType::king), Color::black, 'e', 8));
 }
 
 const char *ChessBoard::GetSymbol(int vertical, int horizontal) const {
@@ -55,8 +72,7 @@ const char *ChessBoard::GetSymbol(int vertical, int horizontal) const {
     
 }
 
-void ChessBoard::PrintChessBoard() const {
-    
+void ChessBoard::PrintChessBoard() const{
     for(int v = 8; v >= 1; --v) {
         putchar('0' + v);
         putchar(' ');

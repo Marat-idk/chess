@@ -57,6 +57,8 @@ public:
     const char *GetSymbol(int vertical, int horizontal) const;
 
     void PrintChessBoard() const;
+
+    void DeletePiece(int vertical, int horizontal);
 };
 
 }   // Chess
