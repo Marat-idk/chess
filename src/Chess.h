@@ -49,6 +49,26 @@ private:
     std::vector<ChessPiece> mPieces;
 
     static const char horizontalPos[];
+
+    char mHorizontal;
+    uint8_t mVertical;
+
+    const char *GetSymbol(char horizontal, int vertical);
+
+    // возвращает указатель на  фигуру если она
+    ChessPiece *GetChessPiece(char horizontal, int vertical);
+
+    // проверка, явялется ли ход допустимым для данной фигуры
+    bool IsMoveLegal(char horizontal, int vertical);
+
+    void PrintChessBoard();
+
+    ChessPiece *PickPiece();
+    bool GetMove();
+
+    // удаление фигуры из вектора, если она была съедена
+    void DeletePiece(int horizontal, int vertical);
+
 public:
     ChessBoard();
     ChessBoard(const ChessBoard& piece) = delete;
@@ -57,16 +77,6 @@ public:
     ChessBoard& operator=(ChessBoard&& piece) = delete;
 
     void StartGame();
-
-    const char *GetSymbol(int vertical, int horizontal) const;
-
-    // проверка, явялется ли ход допустимым для данной фигуры
-    bool IsMoveLegal(int vertical, int horizontal) const;
-
-    void PrintChessBoard() const;
-
-    // удаление фигуры из вектора, если она была съедена
-    void DeletePiece(int vertical, int horizontal);
 };
 
 }   // Chess

@@ -81,39 +81,41 @@ void ChessBoard::StartGame() {
     bool isGameEnded = false;
     while(!isGameEnded) {
         PrintChessBoard();
-        if(!(IsMoveLegal(horizontalPos[3], 3) && mPieces[6].MoveTo(horizontalPos[3], 3)))
-            break;;
+        if(!(IsMoveLegal(horizontalPos[7], 4) && PickPiece()->MoveTo(horizontalPos[7], 4)))
+           break;;
         sleep(2);
         isGameEnded = true; // MARK: must be deleted
     }
     PrintChessBoard();
 }
 
-const char *ChessBoard::GetSymbol(int vertical, int horizontal) const {
-    auto result = std::find_if(mPieces.begin(), mPieces.end(), [vertical, horizontal](const ChessPiece &p) { 
-        return p.getVerticalPos() == vertical && p.getHorizontalPos() == horizontalPos[horizontal-1]; 
-        });
+ChessPiece *ChessBoard::GetChessPiece(char horizontal, int vertical) {
+    auto result = std::find_if(mPieces.begin(), mPieces.end(), [vertical, horizontal](ChessPiece &p) {
+       return p.getVerticalPos() == vertical && p.getHorizontalPos() == horizontal; 
+    });
+    return (result != mPieces.end()) ? &(*result) : nullptr;
+}
+
+const char *ChessBoard::GetSymbol(char horizontal, int vertical) {
+    const ChessPiece *pChessPiece = GetChessPiece(horizontal, vertical);
     
-    if(result != std::end(mPieces))
-        return result->GetPieceSymbol();
+    if(pChessPiece)
+        return pChessPiece->GetPieceSymbol();
     
     return (vertical + horizontal) % 2 == 0 ? "\u25A0" : "\u25A1";
     
 }
 
-bool ChessBoard::IsMoveLegal(int vertical, int horizontal) const {
-    auto result = std::find_if(mPieces.begin(), mPieces.end(), [vertical, horizontal](const ChessPiece &p) {
-        return p.getVerticalPos() == vertical && p.getHorizontalPos() == horizontalPos[horizontal-1]; 
-    });
-    return result == mPieces.end();
+bool ChessBoard::IsMoveLegal(char horizontal, int vertical) {
+    return GetChessPiece(horizontal, vertical) == nullptr;                  // если вернулось nullptr, значит на такой позиции нет элемента
 }
 
-void ChessBoard::PrintChessBoard() const {
+void ChessBoard::PrintChessBoard() {
     for(int v = 8; v >= 1; --v) {
         putchar('0' + v);
         putchar(' ');
         for(int h = 1; h <= 8; ++h) {
-            fprintf(stdout, "%s " , GetSymbol(v, h));
+            fprintf(stdout, "%s " , GetSymbol(horizontalPos[h-1], v));
         }
         putchar('\n');
     }
@@ -123,6 +125,26 @@ void ChessBoard::PrintChessBoard() const {
         putchar(' ');
     }
     putchar('\n');
+}
+
+ChessPiece *ChessBoard::PickPiece() {
+    ChessPiece *pChessPiece = nullptr;
+    while(!pChessPiece) {
+        fputs("Choose your piece: ", stdout);
+        char h;
+        int v;
+        h = fgetc(stdin);
+        v = fgetc(stdin);
+        v -= '0';
+        pChessPiece = GetChessPiece(h, v);
+    }
+    return pChessPiece;
+}
+
+bool ChessBoard::GetMove() {
+
+
+    return true;
 }
 
 } // Chess
