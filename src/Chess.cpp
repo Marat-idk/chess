@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <algorithm>
 #include <unistd.h>
+#include <iostream>
+#include <limits>
 
 namespace Chess {
 
@@ -36,11 +38,12 @@ bool ChessPiece::MoveTo(char horizontal, uint8_t vertical) {
     switch (mPiece)
     {
     case pawn:
-        if(abs(mHorizontal - horizontal) <= 1  && vertical - mVertical > 0 && vertical - mVertical <= 2){
+        if(mHorizontal == horizontal && vertical - mVertical > 0 && vertical - mVertical <= 2){
             mHorizontal = horizontal;
             mVertical = vertical;
             flag = true;
         }
+        break;
     default:
         break;
     }
@@ -49,7 +52,10 @@ bool ChessPiece::MoveTo(char horizontal, uint8_t vertical) {
 
 const char ChessBoard::horizontalPos[] = "abcdefgh";
 
-ChessBoard::ChessBoard() {
+ChessBoard::ChessBoard()
+:mHorizontal(0)
+,mVertical(0)
+{
     for(int i = 0; i < 8; ++i){
         mPieces.push_back(ChessPiece((PieceType::pawn), Color::white, horizontalPos[i], 2));
         mPieces.push_back(ChessPiece((PieceType::pawn), Color::black, horizontalPos[i], 7));
@@ -79,9 +85,12 @@ ChessBoard::ChessBoard() {
 
 void ChessBoard::StartGame() {
     bool isGameEnded = false;
+    ChessPiece *pPiece = nullptr;
     while(!isGameEnded) {
         PrintChessBoard();
-        if(!(IsMoveLegal(horizontalPos[7], 4) && PickPiece()->MoveTo(horizontalPos[7], 4)))
+        pPiece = PickPiece();
+        GetMove();
+        if(!(IsMoveLegal(mHorizontal, mVertical) && pPiece->MoveTo(mHorizontal, mVertical)))
            break;;
         sleep(2);
         isGameEnded = true; // MARK: must be deleted
@@ -111,6 +120,7 @@ bool ChessBoard::IsMoveLegal(char horizontal, int vertical) {
 }
 
 void ChessBoard::PrintChessBoard() {
+    puts("\033[2J\033[1;1H");
     for(int v = 8; v >= 1; --v) {
         putchar('0' + v);
         putchar(' ');
@@ -136,15 +146,20 @@ ChessPiece *ChessBoard::PickPiece() {
         h = fgetc(stdin);
         v = fgetc(stdin);
         v -= '0';
+        std::cin.ignore(std::numeric_limits<int>::max(), '\n');
         pChessPiece = GetChessPiece(h, v);
     }
     return pChessPiece;
 }
 
 bool ChessBoard::GetMove() {
-
-
-    return true;
+    do{
+        fputs("Choose piece move: ", stdout);
+        mHorizontal = fgetc(stdin);
+        mVertical = fgetc(stdin);
+        mVertical -= '0';
+        std::cin.ignore(std::numeric_limits<int>::max(), '\n');
+    }while(mHorizontal < 'a' || mHorizontal > 'h' || mVertical < 1 || mVertical > 8);
 }
 
 } // Chess
