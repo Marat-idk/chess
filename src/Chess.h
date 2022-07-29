@@ -37,7 +37,9 @@ public:
     inline char getHorizontalPos() const { return mHorizontal; }
     inline uint8_t getVerticalPos() const { return mVertical; }
 
-    void MoveTo(char horizontal, uint8_t vertical);
+    // возвращает false, если ход не допустим для фигуры
+    // иначе - перемещает фигуру и возвращает true
+    bool MoveTo(char horizontal, uint8_t vertical);
     
     const char *GetPieceSymbol() const;
 };
@@ -54,10 +56,16 @@ public:
     ChessBoard& operator=(const ChessBoard& piece) = delete;
     ChessBoard& operator=(ChessBoard&& piece) = delete;
 
+    void StartGame();
+
     const char *GetSymbol(int vertical, int horizontal) const;
+
+    // проверка, явялется ли ход допустимым для данной фигуры
+    bool IsMoveLegal(int vertical, int horizontal) const;
 
     void PrintChessBoard() const;
 
+    // удаление фигуры из вектора, если она была съедена
     void DeletePiece(int vertical, int horizontal);
 };
 

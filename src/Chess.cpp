@@ -1,6 +1,7 @@
 #include "Chess.h"
 #include <cstdio>
 #include <algorithm>
+#include <unistd.h>
 
 namespace Chess {
 
@@ -28,6 +29,22 @@ const char* ChessPiece::GetPieceSymbol() const {
         return mColor == white ? "\u2659" : "\u265F";
     }
     return nullptr;
+}
+
+bool ChessPiece::MoveTo(char horizontal, uint8_t vertical) {
+    bool flag = false;
+    switch (mPiece)
+    {
+    case pawn:
+        if(abs(mHorizontal - horizontal) <= 1  && vertical - mVertical > 0 && vertical - mVertical <= 2){
+            mHorizontal = horizontal;
+            mVertical = vertical;
+            flag = true;
+        }
+    default:
+        break;
+    }
+    return flag;
 }
 
 const char ChessBoard::horizontalPos[] = "abcdefgh";
@@ -60,6 +77,18 @@ ChessBoard::ChessBoard() {
     mPieces.push_back(ChessPiece((PieceType::king), Color::black, 'e', 8));
 }
 
+void ChessBoard::StartGame() {
+    bool isGameEnded = false;
+    while(!isGameEnded) {
+        PrintChessBoard();
+        if(!(IsMoveLegal(horizontalPos[3], 3) && mPieces[6].MoveTo(horizontalPos[3], 3)))
+            break;;
+        sleep(2);
+        isGameEnded = true; // MARK: must be deleted
+    }
+    PrintChessBoard();
+}
+
 const char *ChessBoard::GetSymbol(int vertical, int horizontal) const {
     auto result = std::find_if(mPieces.begin(), mPieces.end(), [vertical, horizontal](const ChessPiece &p) { 
         return p.getVerticalPos() == vertical && p.getHorizontalPos() == horizontalPos[horizontal-1]; 
@@ -72,7 +101,14 @@ const char *ChessBoard::GetSymbol(int vertical, int horizontal) const {
     
 }
 
-void ChessBoard::PrintChessBoard() const{
+bool ChessBoard::IsMoveLegal(int vertical, int horizontal) const {
+    auto result = std::find_if(mPieces.begin(), mPieces.end(), [vertical, horizontal](const ChessPiece &p) {
+        return p.getVerticalPos() == vertical && p.getHorizontalPos() == horizontalPos[horizontal-1]; 
+    });
+    return result == mPieces.end();
+}
+
+void ChessBoard::PrintChessBoard() const {
     for(int v = 8; v >= 1; --v) {
         putchar('0' + v);
         putchar(' ');
