@@ -35,14 +35,36 @@ const char* ChessPiece::GetPieceSymbol() const {
 
 bool ChessPiece::MoveTo(char horizontal, uint8_t vertical) {
     bool flag = false;
+    auto movePiece = [this, &flag](char h, uint8_t v) {
+            this->mHorizontal = h;
+            this->mVertical = v;
+            flag = true;
+    };
     switch (mPiece)
     {
     case pawn:
-        if(mHorizontal == horizontal && vertical - mVertical > 0 && vertical - mVertical <= 2){
-            mHorizontal = horizontal;
-            mVertical = vertical;
-            flag = true;
-        }
+        if(mHorizontal == horizontal && abs(vertical - mVertical) > 0 && abs(vertical - mVertical) <= 2)
+            movePiece(horizontal, vertical);
+        break;
+    case knight:
+        if(abs((mHorizontal - horizontal) * (mVertical - vertical)) == 2)
+            movePiece(horizontal, vertical);
+        break;
+    case bishop:
+        if(abs(mHorizontal - horizontal) == abs(mVertical - vertical) && abs(mHorizontal - horizontal) > 0)
+            movePiece(horizontal, vertical);
+        break;
+    case rook:
+        if(mHorizontal == horizontal || mVertical == vertical)
+            movePiece(horizontal, vertical);
+        break;
+    case queen:
+        if(mHorizontal == horizontal || mVertical == vertical || abs(mHorizontal - horizontal) == abs(mVertical - vertical))
+            movePiece(horizontal, vertical);
+        break;
+    case king:
+        if( (mHorizontal - horizontal) * (mHorizontal - horizontal)  + (mVertical - vertical) * (mVertical - vertical) <= 2)
+            movePiece(horizontal, vertical);
         break;
     default:
         break;
@@ -86,14 +108,16 @@ ChessBoard::ChessBoard()
 void ChessBoard::StartGame() {
     bool isGameEnded = false;
     ChessPiece *pPiece = nullptr;
+    bool isWhiteTurn = true;
     while(!isGameEnded) {
         PrintChessBoard();
-        pPiece = PickPiece();
+        pPiece = PickPiece(isWhiteTurn);
         GetMove();
         if(!(IsMoveLegal(mHorizontal, mVertical) && pPiece->MoveTo(mHorizontal, mVertical)))
            break;;
         sleep(2);
-        isGameEnded = true; // MARK: must be deleted
+        isWhiteTurn = !isWhiteTurn;
+        //isGameEnded = true; // MARK: must be deleted
     }
     PrintChessBoard();
 }
@@ -137,9 +161,9 @@ void ChessBoard::PrintChessBoard() {
     putchar('\n');
 }
 
-ChessPiece *ChessBoard::PickPiece() {
+ChessPiece *ChessBoard::PickPiece(bool isWhiteTurn) {
     ChessPiece *pChessPiece = nullptr;
-    while(!pChessPiece) {
+    while(!pChessPiece || (pChessPiece->getColor() == Color::white && !isWhiteTurn)) {
         fputs("Choose your piece: ", stdout);
         char h;
         int v;

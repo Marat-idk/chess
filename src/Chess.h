@@ -36,6 +36,7 @@ public:
 
     inline char getHorizontalPos() const { return mHorizontal; }
     inline uint8_t getVerticalPos() const { return mVertical; }
+    inline Color getColor() const { return mColor; }
 
     // возвращает false, если ход не допустим для фигуры
     // иначе - перемещает фигуру и возвращает true
@@ -63,7 +64,7 @@ private:
 
     void PrintChessBoard();
 
-    ChessPiece *PickPiece();
+    ChessPiece *PickPiece(bool isWhiteTurn);
     bool GetMove();
 
     // удаление фигуры из вектора, если она была съедена
