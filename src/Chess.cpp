@@ -114,7 +114,7 @@ void ChessBoard::StartGame() {
         pPiece = PickPiece(isWhiteTurn);
         GetMove();
         if(!(IsMoveLegal(mHorizontal, mVertical) && pPiece->MoveTo(mHorizontal, mVertical)))
-           break;;
+           continue;
         sleep(2);
         isWhiteTurn = !isWhiteTurn;
         //isGameEnded = true; // MARK: must be deleted
@@ -144,7 +144,8 @@ bool ChessBoard::IsMoveLegal(char horizontal, int vertical) {
 }
 
 void ChessBoard::PrintChessBoard() {
-    puts("\033[2J\033[1;1H");
+    std::system("clear");
+    //puts("\033[0J\033[1;1H");
     for(int v = 8; v >= 1; --v) {
         putchar('0' + v);
         putchar(' ');
