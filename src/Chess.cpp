@@ -12,6 +12,7 @@ ChessPiece::ChessPiece(PieceType piece, Color color, uint8_t horizontal, uint8_t
 ,mColor(color)
 ,mHorizontal(horizontal)
 ,mVertical(vertical)
+,isFirstMove(true)
 {}
 
 const char* ChessPiece::GetPieceSymbol() const {
@@ -43,8 +44,10 @@ bool ChessPiece::MoveTo(char horizontal, uint8_t vertical) {
     switch (mPiece)
     {
     case pawn:
-        if(mHorizontal == horizontal && abs(vertical - mVertical) > 0 && abs(vertical - mVertical) <= 2)
+        if(isFirstMove && mHorizontal == horizontal && abs(vertical - mVertical) > 0 && abs(vertical - mVertical) <= 2)
             movePiece(horizontal, vertical);
+        else if(mHorizontal == horizontal && abs(vertical - mVertical) == 1)
+             movePiece(horizontal, vertical);
         break;
     case knight:
         if(abs((mHorizontal - horizontal) * (mVertical - vertical)) == 2)
@@ -117,14 +120,14 @@ void ChessBoard::StartGame() {
            continue;
         sleep(2);
         isWhiteTurn = !isWhiteTurn;
-        //isGameEnded = true; // MARK: must be deleted
+        isGameEnded = true; // MARK: must be deleted
     }
     PrintChessBoard();
 }
 
 ChessPiece *ChessBoard::GetChessPiece(char horizontal, int vertical) {
-    auto result = std::find_if(mPieces.begin(), mPieces.end(), [vertical, horizontal](ChessPiece &p) {
-       return p.getVerticalPos() == vertical && p.getHorizontalPos() == horizontal; 
+    auto result = std::find_if(mPieces.begin(), mPieces.end(), [horizontal, vertical](ChessPiece &p) {
+       return p.getHorizontalPos() == horizontal && p.getVerticalPos() == vertical; 
     });
     return (result != mPieces.end()) ? &(*result) : nullptr;
 }
@@ -164,6 +167,8 @@ void ChessBoard::PrintChessBoard() {
 
 ChessPiece *ChessBoard::PickPiece(bool isWhiteTurn) {
     ChessPiece *pChessPiece = nullptr;
+    // продолжаем запрашивать выбор фигуры до тех пор, пока пользователь не выберет
+    // существующую по заданным координатам фигуру верного цвета
     while(!pChessPiece || (pChessPiece->getColor() == Color::white && !isWhiteTurn)) {
         fputs("Choose your piece: ", stdout);
         char h;
@@ -177,7 +182,7 @@ ChessPiece *ChessBoard::PickPiece(bool isWhiteTurn) {
     return pChessPiece;
 }
 
-bool ChessBoard::GetMove() {
+void ChessBoard::GetMove() {
     do{
         fputs("Choose piece move: ", stdout);
         mHorizontal = fgetc(stdin);
@@ -185,6 +190,13 @@ bool ChessBoard::GetMove() {
         mVertical -= '0';
         std::cin.ignore(std::numeric_limits<int>::max(), '\n');
     }while(mHorizontal < 'a' || mHorizontal > 'h' || mVertical < 1 || mVertical > 8);
+}
+
+void ChessBoard::DeletePiece(int horizontal, int vertical){
+    auto removeIter = std::remove_if(mPieces.begin(), mPieces.end(), [horizontal, vertical](ChessPiece &p){
+        return p.getHorizontalPos() == horizontal && p.getVerticalPos() == vertical; 
+    });
+    mPieces.erase(removeIter, mPieces.end());
 }
 
 } // Chess

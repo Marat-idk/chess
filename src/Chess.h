@@ -25,6 +25,7 @@ private:
     Color mColor;
     char mHorizontal;
     uint8_t mVertical;
+    bool isFirstMove;
 public:
     ChessPiece() = delete;
     ChessPiece(const PieceType& piece) = delete;
@@ -42,6 +43,7 @@ public:
     // иначе - перемещает фигуру и возвращает true
     bool MoveTo(char horizontal, uint8_t vertical);
     
+    // возвращает символ шахматной фигуры в unicode
     const char *GetPieceSymbol() const;
 };
 
@@ -56,16 +58,20 @@ private:
 
     const char *GetSymbol(char horizontal, int vertical);
 
-    // возвращает указатель на  фигуру если она
+    // возвращает указатель на фигуру если она есть в векторе, иначе nullptr
     ChessPiece *GetChessPiece(char horizontal, int vertical);
 
     // проверка, явялется ли ход допустимым для данной фигуры
     bool IsMoveLegal(char horizontal, int vertical);
 
+    // вывод шахматной доски с фигурами
     void PrintChessBoard();
 
+    // запрашиваем пользовательский выбор фигуры
     ChessPiece *PickPiece(bool isWhiteTurn);
-    bool GetMove();
+    
+    // ход выбранной фигурой
+    void GetMove();
 
     // удаление фигуры из вектора, если она была съедена
     void DeletePiece(int horizontal, int vertical);
