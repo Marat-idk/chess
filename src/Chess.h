@@ -84,7 +84,7 @@ private:
     // удаление фигуры из вектора, если она была съедена
     void DeletePiece(int horizontal, int vertical);
 
-    void DeletePiece(ChessPiece *piece);
+    void DeletePiece(ChessPiece &piece);
 public:
     ChessBoard();
     ChessBoard(const ChessBoard& piece) = delete;

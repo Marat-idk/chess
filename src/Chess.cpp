@@ -205,10 +205,8 @@ void ChessBoard::DeletePiece(int horizontal, int vertical){
     mPieces.erase(removeIter, mPieces.end());
 }
 
-void ChessBoard::DeletePiece(ChessPiece *piece){
-    assert(piece);
-
-    //mPieces.erase(std::remove(mPieces.begin(), mPieces.end(), piece), mPieces.end());
+void ChessBoard::DeletePiece(ChessPiece &piece){
+    mPieces.erase(std::remove(mPieces.begin(), mPieces.end(), piece), mPieces.end());
 }
 
 } // Chess
