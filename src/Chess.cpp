@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <limits>
+#include <cassert>
 
 namespace Chess {
 
@@ -116,7 +117,7 @@ void ChessBoard::StartGame() {
         PrintChessBoard();
         pPiece = PickPiece(isWhiteTurn);
         GetMove();
-        if(!(IsMoveLegal(mHorizontal, mVertical) && pPiece->MoveTo(mHorizontal, mVertical)))
+        if(!(IsMoveLegal(mHorizontal, mVertical, pPiece->getColor()) && pPiece->MoveTo(mHorizontal, mVertical)))
            continue;
         sleep(2);
         isWhiteTurn = !isWhiteTurn;
@@ -142,8 +143,9 @@ const char *ChessBoard::GetSymbol(char horizontal, int vertical) {
     
 }
 
-bool ChessBoard::IsMoveLegal(char horizontal, int vertical) {
-    return GetChessPiece(horizontal, vertical) == nullptr;                  // если вернулось nullptr, значит на такой позиции нет элемента
+bool ChessBoard::IsMoveLegal(char horizontal, int vertical, Color color) {
+    const ChessPiece *pChessPiece = GetChessPiece(horizontal, vertical);
+    return pChessPiece == nullptr || pChessPiece->getColor() != color;                  // если вернулось nullptr, значит на такой позиции нет элемента
 }
 
 void ChessBoard::PrintChessBoard() {
@@ -192,11 +194,21 @@ void ChessBoard::GetMove() {
     }while(mHorizontal < 'a' || mHorizontal > 'h' || mVertical < 1 || mVertical > 8);
 }
 
+void ChessBoard::MoveTo(char horizontal, uint8_t vertical){
+    
+}
+
 void ChessBoard::DeletePiece(int horizontal, int vertical){
     auto removeIter = std::remove_if(mPieces.begin(), mPieces.end(), [horizontal, vertical](ChessPiece &p){
         return p.getHorizontalPos() == horizontal && p.getVerticalPos() == vertical; 
     });
     mPieces.erase(removeIter, mPieces.end());
+}
+
+void ChessBoard::DeletePiece(ChessPiece *piece){
+    assert(piece);
+
+    //mPieces.erase(std::remove(mPieces.begin(), mPieces.end(), piece), mPieces.end());
 }
 
 } // Chess

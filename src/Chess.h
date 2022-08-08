@@ -45,7 +45,13 @@ public:
     
     // возвращает символ шахматной фигуры в unicode
     const char *GetPieceSymbol() const;
+
+    friend bool operator==(const ChessPiece &p1, const ChessPiece &p2) noexcept;
 };
+
+inline bool operator==(const ChessPiece &p1, const ChessPiece &p2) noexcept { 
+    return p1.getHorizontalPos() == p2.getHorizontalPos() && p1.getVerticalPos() == p2.getVerticalPos();
+}
 
 class ChessBoard {
 private:
@@ -62,7 +68,7 @@ private:
     ChessPiece *GetChessPiece(char horizontal, int vertical);
 
     // проверка, явялется ли ход допустимым для данной фигуры
-    bool IsMoveLegal(char horizontal, int vertical);
+    bool IsMoveLegal(char horizontal, int vertical, Color color);
 
     // вывод шахматной доски с фигурами
     void PrintChessBoard();
@@ -73,9 +79,12 @@ private:
     // ход выбранной фигурой
     void GetMove();
 
+    void MoveTo(char horizontal, uint8_t vertical);
+
     // удаление фигуры из вектора, если она была съедена
     void DeletePiece(int horizontal, int vertical);
 
+    void DeletePiece(ChessPiece *piece);
 public:
     ChessBoard();
     ChessBoard(const ChessBoard& piece) = delete;
@@ -85,5 +94,4 @@ public:
 
     void StartGame();
 };
-
 }   // Chess
