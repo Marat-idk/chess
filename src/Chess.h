@@ -68,18 +68,16 @@ private:
     ChessPiece *GetChessPiece(char horizontal, int vertical);
 
     // проверка, явялется ли ход допустимым для данной фигуры
-    bool IsMoveLegal(char horizontal, int vertical, Color color);
+    bool CheckPosition(char horizontal, int vertical, Color color, ChessPiece *&pieceOnPos);
 
     // вывод шахматной доски с фигурами
     void PrintChessBoard();
 
     // запрашиваем пользовательский выбор фигуры
-    ChessPiece *PickPiece(bool isWhiteTurn);
+    ChessPiece *PickPiece(Color ColorTurn);
     
     // ход выбранной фигурой
     void GetMove();
-
-    void MoveTo(char horizontal, uint8_t vertical);
 
     // удаление фигуры из вектора, если она была съедена
     void DeletePiece(int horizontal, int vertical);

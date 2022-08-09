@@ -112,16 +112,23 @@ ChessBoard::ChessBoard()
 void ChessBoard::StartGame() {
     bool isGameEnded = false;
     ChessPiece *pPiece = nullptr;
+    ChessPiece *pPieceToEat = nullptr;
     bool isWhiteTurn = true;
+
     while(!isGameEnded) {
         PrintChessBoard();
-        pPiece = PickPiece(isWhiteTurn);
-        GetMove();
-        if(!(IsMoveLegal(mHorizontal, mVertical, pPiece->getColor()) && pPiece->MoveTo(mHorizontal, mVertical)))
-           continue;
+        pPiece = isWhiteTurn ? PickPiece(Color::white) : PickPiece(Color::black);
+        GetMove(); 
+        if(CheckPosition(mHorizontal, mVertical, pPiece->getColor(), pPieceToEat) && pPiece->MoveTo(mHorizontal, mVertical)){
+            if(pPieceToEat)
+                DeletePiece(*pPieceToEat);
+        }
+        else
+            continue;
+           
         sleep(2);
         isWhiteTurn = !isWhiteTurn;
-        isGameEnded = true; // MARK: must be deleted
+        //isGameEnded = true; // MARK: must be deleted
     }
     PrintChessBoard();
 }
@@ -143,9 +150,9 @@ const char *ChessBoard::GetSymbol(char horizontal, int vertical) {
     
 }
 
-bool ChessBoard::IsMoveLegal(char horizontal, int vertical, Color color) {
-    const ChessPiece *pChessPiece = GetChessPiece(horizontal, vertical);
-    return pChessPiece == nullptr || pChessPiece->getColor() != color;                  // если вернулось nullptr, значит на такой позиции нет элемента
+bool ChessBoard::CheckPosition(char horizontal, int vertical, Color color, ChessPiece *&pieceOnPos) {
+    pieceOnPos = GetChessPiece(horizontal, vertical);
+    return pieceOnPos == nullptr || pieceOnPos->getColor() != color;                  // если вернулось nullptr, значит на такой позиции нет элемента
 }
 
 void ChessBoard::PrintChessBoard() {
@@ -167,11 +174,11 @@ void ChessBoard::PrintChessBoard() {
     putchar('\n');
 }
 
-ChessPiece *ChessBoard::PickPiece(bool isWhiteTurn) {
+ChessPiece *ChessBoard::PickPiece(Color ColorTurn) {
     ChessPiece *pChessPiece = nullptr;
     // продолжаем запрашивать выбор фигуры до тех пор, пока пользователь не выберет
     // существующую по заданным координатам фигуру верного цвета
-    while(!pChessPiece || (pChessPiece->getColor() == Color::white && !isWhiteTurn)) {
+    while(!pChessPiece || (pChessPiece->getColor() != ColorTurn)) {
         fputs("Choose your piece: ", stdout);
         char h;
         int v;
@@ -192,10 +199,6 @@ void ChessBoard::GetMove() {
         mVertical -= '0';
         std::cin.ignore(std::numeric_limits<int>::max(), '\n');
     }while(mHorizontal < 'a' || mHorizontal > 'h' || mVertical < 1 || mVertical > 8);
-}
-
-void ChessBoard::MoveTo(char horizontal, uint8_t vertical){
-    
 }
 
 void ChessBoard::DeletePiece(int horizontal, int vertical){
